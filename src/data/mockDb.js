@@ -1,28 +1,33 @@
-export const equipment = [
-  { id: 'EQ-1', name: 'Laptop Dell', type: 'Laptop' },
-  { id: 'EQ-2', name: 'iPhone 14', type: 'Phone' },
-  { id: 'EQ-3', name: 'iPad Pro', type: 'Tablet' }
-];
+export const db = {
+  equipment: [
+    { id: 'EQ-1', name: 'Boots' },
+    { id: 'EQ-2', name: 'Helmet' },
+    { id: 'EQ-3', name: 'Vest' }
+  ],
 
-export const reservations = [
-  {
-    id: 'R-1',
-    employeeId: 'EMP-001',
-    equipment: "Boots",
-    date: '2024-12-20',
-    status: 'Returned',
-    returnDate: '2024-12-22'
-  },
-  {
-    id: 'R-2',
-    employeeId: 'EMP-002',
-    equipment: "Vest",
-    date: '2024-12-23',
-    status: 'Pending',
-    returnDate: null
-  }
-];
+  reservations: [
+    {
+      id: 'R-1',
+      employeeId: 'EMP-0001',
+      equipmentId: 'EQ-1',
+      equipmentName: 'Boots',
+      reservationDate: '2024-12-20',
+      status: 'Returned',
+      returnDate: '2024-12-22'
+    },
+    {
+      id: 'R-2',
+      employeeId: 'EMP-0002',
+      equipmentId: 'EQ-3',
+      equipmentName: 'Vest',
+      reservationDate: '2024-12-23',
+      status: 'Overdue',
+      returnDate: '2024-11-22'
+    }
+  ],
 
-export const availability = {
-  "2023-12-25": { status: "blocked" }
+  calendarBlockedDates: [
+    { date: '2025-12-25', reason: 'Reserved' },
+    { date: '2025-12-28', reason: 'Maintenance' }
+  ]
 }

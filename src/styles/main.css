@@ -19,6 +19,7 @@
   --primary: #383838; 
   --accent1: #eaeaea;
   --bs-primary: #FF6B6B;
+  --bs-primary-rgb: 56,56,56;
   --bs-pagination-active-bg: #FF6B6B;
   --bs-pagination-active-border-color: #FF6B6B;
 }
@@ -223,10 +224,57 @@ a.fc-daygrid-day-number {
 .fc .fc-daygrid-more-link {
     font-weight: 700;
 }
+/* -------- */
+/* loader */
+.loader {
+  display: inline-block;
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+}
+
+.loader div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0.25rem;
+  border: 0.35rem solid #0d6efd; /* Bootstrap primary */
+  border-radius: 50%;
+  animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #0d6efd transparent transparent transparent;
+}
+
+.loader div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.loader div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Available & Blocked days */
+.day-available {
+  background-color: #e6f7ec; /* soft green */
+  cursor: pointer;
+}
+.day-blocked {
+  background-color: #f8d7da;
+  cursor: not-allowed;
+}
 
 
-
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -237,7 +285,7 @@ a.fc-daygrid-day-number {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
 
 
 @media (max-width: 768px) {

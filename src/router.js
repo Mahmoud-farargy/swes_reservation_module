@@ -30,11 +30,16 @@ async function loadRoute(path) {
   
   viewElement.innerHTML = await module.default();
   module.mounted?.();
+
+  window.scrollTo({
+    top:0,
+    behavior: "auto"
+  });
   
   disableLinksDefaultBehavior();
 }
 
-export function navigate(path) {
+function navigate(path) {
   if (path === location.pathname + location.search) {
     return;
   }
@@ -46,7 +51,7 @@ window.addEventListener('popstate', () => {
   loadRoute(location.pathname);
 });
 
-export function disableLinksDefaultBehavior() {
+function disableLinksDefaultBehavior() {
     const allLinks = document.querySelectorAll("a[data-link]");
     allLinks.forEach((linkItem) => {
         linkItem.addEventListener("click", (clickEvent) => {
@@ -57,6 +62,12 @@ export function disableLinksDefaultBehavior() {
     })
 }
 
-export function initRouter() { 
+
+function init() { 
     loadRoute(location.pathname);
+}
+
+export const router = {
+  navigate,
+  init,
 }

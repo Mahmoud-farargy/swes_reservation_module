@@ -1,7 +1,8 @@
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { navigate } from '@/router';
+import { Calendar } from "@fullcalendar/core"
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin from "@fullcalendar/interaction"
+import { router } from "@/router"
+import { db } from "@/data/mockDB" // replace this with an mock api request
 
 export default function CalendarView() {
   return `
@@ -26,25 +27,45 @@ export default function CalendarView() {
 }
 
 export async function mounted() {
-const calendarEl = document.getElementById("calendar");
+  const calendarEl = document.getElementById("calendar")
 
+  // { title: 'Available', start: '2025-12-24', color: '#28a745', extendedProps: { type: 'Available' } }
+  // { title: 'Blocked', start: '2025-12-25', color: '#dc3545', extendedProps: { type: 'Blocked' } }
+
+  const blockedEvents = db.calendarBlockedDates.map((item) => ({
+    start: item.date,
+    end: item.date,
+    // title: item.reason,
+    display: "background",
+    // color: "#dd4857ff",
+    backgroundColor: "#f8d7da",
+    extendedProps: {
+      blocked: true,
+      reason: item.reason,
+    },
+  }))
   const calendar = new Calendar(calendarEl, {
-    height: '72vh',
+    height: "72vh",
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
-    events: [
-      { title: 'Available', start: '2025-12-24', color: '#28a745', extendedProps: { type: 'Available' } },
-      { title: 'Blocked', start: '2025-12-25', color: '#dc3545', extendedProps: { type: 'Blocked' } }
-    ],
+    // dayCellClassNames(arg) {
+    //   console.log("arg", arg);
+    //   const isBlocked = db.calendarBlockedDates.some(
+    //     d => d.date === arg.dateStr
+    //   );
 
-    dateClick: function(info) {
-        console.log('info', info);
-    //     if(info.title === "Blocked"){
-    //         return;
-    //     }
-      navigate(`/make_reservation?date=${info.dateStr}`)
-    }
-  });
+    //   return isBlocked ? ['day-blocked'] : ['day-available'];
+    // },
+    events: blockedEvents,
+    dateClick: function (info) {
+      const isBlocked =
+        info.dayEl.classList.contains("fc-day-disabled") ||
+        info.event?.extendedProps?.type === "Blocked"
 
-  calendar.render();
+      if (isBlocked) return
+      router.navigate(`/make_reservation?date=${info.dateStr}`)
+    },
+  })
+
+  calendar.render()
 }

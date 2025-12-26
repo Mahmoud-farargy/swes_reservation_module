@@ -1,30 +1,7 @@
-export default function DataTable(data = [], events) {
-  // <tr>
-  //               <td class="fw-semibold">EMP-1002</td>
-  //               <td>Safety Helmet</td>
-  //               <td>18 Jun 2025</td>
-  //               <td>
-  //                 <span class="badge bg-warning-subtle text-warning">
-  //                   Pending
-  //                 </span>
-  //               </td>
-  //               <td class="text-end">
-  //                 <button class="btn btn-sm btn-link fw-semibold">
-  //                   View
-  //                 </button>
-  //               </td>
-  //             </tr>
+import { StatusBadge } from "./StatusBadge";
 
-  function getStatusBadge(status) {
-    const colors = {
-      Returned: "bg-success-subtle text-success",
-      Pending: "bg-warning-subtle text-warning",
-      Overdue: "bg-danger-subtle text-danger",
-    }
-    return `<span class="badge ${
-      colors[status] || "bg-secondary-subtle text-black"
-    }">${status}</span>`
-  }
+export default function DataTable(data = []) {
+
   return `
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
@@ -50,9 +27,9 @@ export default function DataTable(data = [], events) {
                         <tr>
                             <td class="fw-semibold">${item.employeeId}</td>
                             <td>${item.equipment}</td>
-                            <td>${item.returnDate}</td>
+                            <td>${item.reservationDate}</td>
                             <td>
-                                ${getStatusBadge(item.status)}
+                                ${StatusBadge(item.status)}
                             </td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-link fw-semibold">
@@ -66,7 +43,7 @@ export default function DataTable(data = [], events) {
               </tbody> 
             </table>
           </div>`
-            : `<div>No records found.</div>`
+            : `<div class="mb-3 mt-1">No records found.</div>`
         }
     
           <!-- footer -->

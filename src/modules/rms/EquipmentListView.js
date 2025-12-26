@@ -1,18 +1,12 @@
 import mockApi from "@/utils/mockApi"
 import DataTable from "@/components/ui/DataTable"
+import { LoaderSpinner } from "@/components/ui/LoaderSpinner"
+import { toastify } from "@/utils/helpers"
 
 export default function EquipmentList() {
-  //  <div class="col-md-3">
-  //   <label class="form-label fw-semibold">Status</label>
-  //   <select class="form-select">
-  //     <option value="">All statuses</option>
-  //     <option>Returned</option>
-  //     <option>Pending</option>
-  //     <option>Overdue</option>
-  //   </select>
-  // </div>
+
   return `
-  <div class="my-3">
+    <div class="my-3">
       <!-- Page Header -->
       <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
@@ -29,7 +23,6 @@ export default function EquipmentList() {
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
           <div class="row flex-wrap g-4 align-items-end">
-
             <!-- Search -->
             <div class="col-md-6 col-xl-4">
               <label class="form-label fw-semibold">Search</label>
@@ -65,25 +58,23 @@ export default function EquipmentList() {
               <div class="d-flex gap-2">
                 <div class="input-group">
                   <span class="input-group-text">
-                    <i class="bi bi-calendar-event"></i>
+                     <i class="bi bi-calendar-event"></i>
                   </span>
                   <input type="date" class="form-control" />
                 </div>
 
                 <div class="input-group">
                   <span class="input-group-text">
-                    <i class="bi bi-calendar-event"></i>
+                     <i class="bi bi-arrow-right"></i>
                   </span>
                   <input type="date" class="form-control" />
                 </div>
               </div>
             </div>
-
-            <!-- Status checkboxes -->
+            <!-- Status -->
             <div class="col-md-6 col-xl-4">
               <label class="form-label fw-semibold d-block mb-2">Status</label>
               <div class="d-flex flex-wrap gap-3">
-
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -118,7 +109,6 @@ export default function EquipmentList() {
                     Overdue
                   </label>
                 </div>
-
               </div>
             </div>
 
@@ -137,32 +127,18 @@ export default function EquipmentList() {
         </div>
       </div>
 
-      <div id="dataTable">
-        ${DataTable([])}
+      <div id="dataTable" class="position-relative">
+        <div class="pt-5 pb-2">
+          ${LoaderSpinner()}
+        </div>
       </div>
-      
-      <div id="loader">Loading..</div>
+
     </div>
   `
 }
 
 export async function mounted() {
-  const loaderElement = document.getElementById("loader")
-  // const tableBodyElement = document.getElementById("tableBody")
-  const emptyState = document.getElementById("empty-state")
   const dataTable = document.getElementById("dataTable")
-  // const tablebody = document.getElementById("tablebody")
-
-  // setTimeout(() => {
-  //   console.log("before", tablebody);
-  //   dataTable.innerHTML = DataTable();
-  // }, 3000);
-
-  // setTimeout(() => {
-  //   console.log("after", tablebody);
-  // }, 5000);
-
-  console.log("loaderElement2", loaderElement)
 
   // DataTable: on click event listener
   dataTable.addEventListener("click", (e) => {
@@ -195,11 +171,11 @@ export async function mounted() {
 
     dataTable.innerHTML = DataTable(result.data)
   } catch (err) {
-    console.error(
-      "failed to fetch Equipment History. Please try again later ",
-      err
-    )
-  } finally {
-    loaderElement?.classList.add("d-none")
+    console.error(err)
+    dataTable.innerHTML = `<div class="my-4 text-center">An error occurred. Try again later!<div>`
+    toastify({
+      type: "error",
+      message: "failed to fetch Equipment History. Please try again later."
+    })
   }
 }
