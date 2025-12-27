@@ -1,5 +1,11 @@
 import { db } from "@/data/mockDb"
-import { generateId, getTodayDate } from "@/utils/helpers"
+import {
+  generateId,
+  todayISO,
+  urlToObject,
+  lowerString,
+  upperString,
+} from "@/utils/helpers"
 
 const simulateRequest = (response, shouldFail = false) => {
   const NETWORK_DELAY = Math.floor(Math.random() * 1500)
@@ -18,16 +24,64 @@ const simulateRequest = (response, shouldFail = false) => {
 }
 
 export default async function mockApi(endpoint, options = { method: "GET" }) {
-  const shouldFail = Math.random() < 0.05
+  const method = upperString(options.method ?? "GET")
+  const shouldFail = Math.random() < 0.01 //simulate a very low chance of failure
+  const [path, queryString] = endpoint.split("?") || ["", ""]
+  const params = urlToObject(new URLSearchParams(queryString))
+  const {
+    search = "",
+    equipment = "",
+    dateFrom = "",
+    dateTo = "",
+    excludedStatus = "",
+  } = params || {}
 
-  if (endpoint === "/api/equipment-history" && options.method === "GET") {
-    return await simulateRequest(
-      { status: 200, data: db.reservations },
-      shouldFail
+  if (path === "/api/equipment-history" && method === "GET") {
+    const searchLc = lowerString(search)
+    const equipmentLc = lowerString(equipment)
+    const excludedStatusSet = new Set(
+      excludedStatus
+        .split(",")
+        .filter(Boolean)
+        .map((status) => lowerString(status))
     )
+
+    const filtered = db.reservations?.filter((reservation) => {
+      const employeeId = lowerString(reservation.employeeId) ?? ""
+      const equipmentId = lowerString(reservation.equipmentId) ?? ""
+      const status = lowerString(reservation.status) ?? ""
+      const resDate = new Date(reservation.reservationDate).getTime()
+
+      // --- search ---
+      const matchesSearch = !searchLc || employeeId.includes(searchLc)
+
+      // --- equipment ---
+      const matchesEquipment = !equipmentLc || equipmentId === equipmentLc
+
+      // --- status exclusion ---
+      const matchesStatus =
+        !excludedStatusSet.size || !excludedStatusSet.has(status)
+
+      // --- date range ---
+      let matchesDate = true
+
+      if (dateFrom) {
+        const from = new Date(dateFrom).getTime()
+        matchesDate = matchesDate && resDate >= from
+      }
+
+      if (dateTo) {
+        const to = new Date(dateTo).getTime()
+        matchesDate = matchesDate && resDate <= to
+      }
+
+      return matchesSearch && matchesEquipment && matchesStatus && matchesDate
+    })
+
+    return await simulateRequest({ status: 200, data: filtered }, shouldFail)
   }
 
-  if (endpoint === "/api/reservations" && options.method === "POST") {
+  if (path === "/api/reservations" && method === "POST") {
     const body = JSON.parse(options.body)
 
     if (!body.employeeId) {
@@ -37,9 +91,9 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     const newEntry = {
       id: generateId("reservation"),
       ...body,
-      date: getTodayDate(),
+      date: todayISO(),
       status: "Pending",
-      returnDate: getTodayDate(),
+      returnDate: todayISO(),
     }
 
     db.reservations.unshift(newEntry)
@@ -47,7 +101,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     return simulateRequest({ status: 201, data: newEntry })
   }
 
-  if (endpoint === "/api/notify" && options.method === "POST") {
+  if (path === "/api/notify" && method === "POST") {
     return await simulateRequest(
       { status: 200, message: "Email Sent Successfully" },
       shouldFail

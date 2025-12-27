@@ -1,9 +1,9 @@
 import mockApi from "@/utils/mockAPI"
 import { toastify } from "@/utils/helpers.js"
 import { router } from "@/router"
-import { LoaderSpinner } from "./ui/LoaderSpinner"
+import { LoaderSpinner } from "./ui"
 
-export const ReservationForm = () => {
+export default function ReservationForm() {
   return `
   <div class="position-relative">
    <!-- Loader -->
@@ -67,37 +67,23 @@ export const ReservationForm = () => {
 
 export function mountedReservationForm(root) {
   if (!root) return
+  // ---- Constants ----
   const reservationDateElement = root.querySelector("#reservationDate")
   const loaderElement = root.querySelector("#loader")
   const form = root.querySelector("#reservationForm")
   const submitButton = form.querySelector("button[type='submit']")
-  
 
-  console.log("loaderElement", loaderElement)
-  // pre-fill date from query
+  // ---- First input focusing for better UX ----
+  form.querySelector("#employeeId")?.focus();
+
+  // ---- Pre-fill date from query ----
   const params = new URLSearchParams(window.location.search)
   const date = params.get("date")
   if (reservationDateElement && date) {
     reservationDateElement.value = date
   }
-  console.log("form", form)
-  // Handle form validation & submission
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault()
 
-    if (!form.checkValidity()) {
-      form.classList.add("was-validated")
-      return
-    }
-    const { employeeId, equipment, reservationDate } = form || {}
-    const formData = {
-      employeeId: employeeId.value.trim(),
-      equipment: equipment.value,
-      reservationDate: reservationDate.value,
-    }
-    await submitReservation(formData)
-  })
-
+  // ---- Functions ----
   const toggleSpinner = (state) => {
     loaderElement.classList.toggle("d-none", !state);
     loaderElement.classList.toggle("d-block", state);
@@ -138,7 +124,7 @@ export function mountedReservationForm(root) {
       form.reset()
       form.classList.remove("was-validated")
 
-      router.navigate("/")
+      router.push("/")
     } catch (err) {
       console.error(err)
       toastify({
@@ -150,4 +136,21 @@ export function mountedReservationForm(root) {
       toggleSpinner(false)
     }
   }
+
+  // ---- Event listeners ----
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault()
+
+    if (!form.checkValidity()) {
+      form.classList.add("was-validated")
+      return
+    }
+    const { employeeId, equipment, reservationDate } = form || {}
+    const formData = {
+      employeeId: employeeId.value.trim(),
+      equipment: equipment.value,
+      reservationDate: reservationDate.value,
+    }
+    await submitReservation(formData)
+  })
 }

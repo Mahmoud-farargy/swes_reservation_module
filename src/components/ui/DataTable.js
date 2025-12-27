@@ -1,7 +1,6 @@
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge } from "./"
 
 export default function DataTable(data = []) {
-
   return `
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
@@ -26,7 +25,7 @@ export default function DataTable(data = []) {
                     (item) => `
                         <tr>
                             <td class="fw-semibold">${item.employeeId}</td>
-                            <td>${item.equipment}</td>
+                            <td>${item.equipmentName}</td>
                             <td>${item.reservationDate}</td>
                             <td>
                                 ${StatusBadge(item.status)}

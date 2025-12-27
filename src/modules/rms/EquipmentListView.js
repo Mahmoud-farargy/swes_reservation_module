@@ -1,10 +1,15 @@
 import mockApi from "@/utils/mockApi"
-import DataTable from "@/components/ui/DataTable"
-import { LoaderSpinner } from "@/components/ui/LoaderSpinner"
-import { toastify } from "@/utils/helpers"
+import { DataTable, LoaderSpinner } from "@/components/ui"
+import DataTableFilters, { mountFilters } from "@/components/ReservationFilters"
+import {
+  toastify,
+  refreshApp,
+  urlToObject,
+  objectToUrl,
+  getCurrentSearchParams,
+} from "@/utils/helpers"
 
 export default function EquipmentList() {
-
   return `
     <div class="my-3">
       <!-- Page Header -->
@@ -19,112 +24,8 @@ export default function EquipmentList() {
         </a>
       </div>
 
-      <!-- Filters -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-          <div class="row flex-wrap g-4 align-items-end">
-            <!-- Search -->
-            <div class="col-md-6 col-xl-4">
-              <label class="form-label fw-semibold">Search</label>
-              <div class="input-group">
-                <span class="input-group-text">
-                  <i class="bi bi-search"></i>
-                </span>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search by employee or item"
-                />
-              </div>
-            </div>
-            <!-- Equipment -->
-            <div class="col-md-6 col-xl-4">
-                <label class="form-label fw-semibold">Equipment</label>
-                <div class="input-group">
-                  <span class="input-group-text">
-                    <i class="bi bi-tags"></i>
-                  </span>
-                  <select class="form-select">
-                    <option value="">All Equipment Categories</option>
-                    <option>Helmet</option>
-                    <option>Boots</option>
-                    <option>Gloves</option>
-                  </select>
-                </div>
-            </div>
-            <!-- Date range -->
-            <div class="col-md-6 col-xl-4">
-              <label class="form-label fw-semibold">Reservation Date</label>
-              <div class="d-flex gap-2">
-                <div class="input-group">
-                  <span class="input-group-text">
-                     <i class="bi bi-calendar-event"></i>
-                  </span>
-                  <input type="date" class="form-control" />
-                </div>
-
-                <div class="input-group">
-                  <span class="input-group-text">
-                     <i class="bi bi-arrow-right"></i>
-                  </span>
-                  <input type="date" class="form-control" />
-                </div>
-              </div>
-            </div>
-            <!-- Status -->
-            <div class="col-md-6 col-xl-4">
-              <label class="form-label fw-semibold d-block mb-2">Status</label>
-              <div class="d-flex flex-wrap gap-3">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="statusReturned"
-                    checked
-                  />
-                  <label class="form-check-label" for="statusReturned">
-                    Returned
-                  </label>
-                </div>
-
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="statusPending"
-                    checked
-                  />
-                  <label class="form-check-label" for="statusPending">
-                    Pending
-                  </label>
-                </div>
-
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="statusOverdue"
-                  />
-                  <label class="form-check-label" for="statusOverdue">
-                    Overdue
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions row -->
-            <div class="col-md-6 col-xl-4 ms-auto">
-              <div class="d-flex justify-content-end">
-                <button class="btn btn-outline-secondary">
-                  <i class="bi bi-arrow-counterclockwise me-1"></i>
-                  Reset filters
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
+      <div id="filters">
+        ${DataTableFilters()}
       </div>
 
       <div id="dataTable" class="position-relative">
@@ -138,9 +39,11 @@ export default function EquipmentList() {
 }
 
 export async function mounted() {
+  // ---- constants ----
   const dataTable = document.getElementById("dataTable")
+  const filters = document.getElementById("filters")
 
-  // DataTable: on click event listener
+  // ---- DataTable - on click event listener ----
   dataTable.addEventListener("click", (e) => {
     const action = e.target.closest("[data-action]")?.dataset.action
     if (!action) return
@@ -165,17 +68,49 @@ export async function mounted() {
     }
   })
 
-  try {
-    const response = await mockApi("/api/equipment-history")
-    const result = await response.json()
+  const reloadBtnEventController = new AbortController()
 
-    dataTable.innerHTML = DataTable(result.data)
-  } catch (err) {
-    console.error(err)
-    dataTable.innerHTML = `<div class="my-4 text-center">An error occurred. Try again later!<div>`
-    toastify({
-      type: "error",
-      message: "failed to fetch Equipment History. Please try again later."
-    })
+  const fetchEquipmentList = async (page = 1, extraParams = {}) => {
+    try {
+      const currentParams = urlToObject(getCurrentSearchParams())
+      const mergedParams = {
+        ...currentParams,
+        ...extraParams,
+        page,
+      }
+      const url = objectToUrl(
+        new URLSearchParams(mergedParams),
+        "/api/equipment-history"
+      )
+      const response = await mockApi(url)
+      const result = await response.json()
+
+      dataTable.innerHTML = DataTable(result.data)
+      reloadBtnEventController.abort()
+    } catch (err) {
+      console.error(err)
+      dataTable.innerHTML = `<div class="my-4 text-center">
+              An error occurred. Try again later! <button data-action="reload" class="btn btn-dark mt-1">Reload</button>
+          <div>`
+
+      dataTable.addEventListener(
+        "click",
+        (e) => {
+          if (e.target.matches('[data-action="reload"]')) {
+            refreshApp()
+          }
+        },
+        { signal: reloadBtnEventController.signal }
+      )
+
+      toastify({
+        type: "error",
+        message: "Failed to fetch Equipment History. Please try again later.",
+      })
+    }
   }
+
+  // ------ Init -------
+  mountFilters(filters)
+  fetchEquipmentList()
 }

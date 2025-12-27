@@ -1,4 +1,4 @@
-export function StatusBadge(status) {
+export default function StatusBadge(status) {
   const colors = {
     Returned: "bg-success-subtle text-success",
     Pending: "bg-warning-subtle text-warning",

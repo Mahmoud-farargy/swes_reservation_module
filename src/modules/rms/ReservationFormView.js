@@ -1,6 +1,6 @@
 // export const css = '/src/styles/about.css';
 
-import { ReservationForm, mountedReservationForm } from "@/components/ReservationForm";
+import ReservationForm, { mountedReservationForm } from "@/components/ReservationForm";
 
 export default function ReservationFormView() {
 

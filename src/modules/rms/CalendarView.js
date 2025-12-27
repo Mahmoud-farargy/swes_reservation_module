@@ -63,7 +63,7 @@ export async function mounted() {
         info.event?.extendedProps?.type === "Blocked"
 
       if (isBlocked) return
-      router.navigate(`/make_reservation?date=${info.dateStr}`)
+      router.push(`/make_reservation?date=${info.dateStr}`)
     },
   })
 
