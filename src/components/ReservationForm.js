@@ -17,7 +17,7 @@ export default function ReservationForm() {
           <label for="employeeId" class="form-label fw-semibold">
               Employee ID <span class="text-danger">*</span>
           </label>
-          <input type="text" class="form-control" id="employeeId" pattern="EMP-[0-9]{4}" placeholder="EMP-1001" required />
+          <input type="text" class="form-control" id="employeeId" pattern="EMP-[0-9]{4}" maxlength="8" placeholder="EMP-1001" required />
           <div class="invalid-feedback">
               Employee ID must be in the format <strong>EMP-1234</strong>.
           </div>
@@ -105,7 +105,8 @@ export function mountedReservationForm(root) {
       })
 
       if (!response.ok) {
-        toastify({ type: "error", message: "Submission Failed" })
+        const errorData = await response.json?.();
+        toastify({ type: "error", message: errorData|| "Submission Failed" })
         return
       }
 
@@ -145,11 +146,16 @@ export function mountedReservationForm(root) {
       form.classList.add("was-validated")
       return
     }
+    
     const { employeeId, equipment, reservationDate } = form || {}
+
+    const selectedOption = equipment.options[equipment.selectedIndex]
+    const equipmentName = selectedOption.dataset.name;
+
     const formData = {
       employeeId: employeeId.value.trim(),
       equipmentId: equipment.value,
-      equipmentName: equipment.value,
+      equipmentName,
       reservationDate: reservationDate.value,
     }
     await submitReservation(formData)

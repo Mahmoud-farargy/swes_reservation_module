@@ -167,5 +167,20 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     )
   }
 
+  if (path === "/api/equipment-categories" && method === "GET") {
+    return await simulateRequest(
+      { status: 200, data: db.equipment },
+      shouldFail
+    )
+  }
+
+  if (path === "/api/calendar-blocked-dates" && method === "GET") {
+    return await simulateRequest(
+      { status: 200, data: db.calendarBlockedDates },
+      shouldFail
+    )
+  }
+
+
   return await simulateRequest({ status: 404 }, true)
 }

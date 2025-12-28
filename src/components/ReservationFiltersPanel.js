@@ -202,7 +202,6 @@ export const mountFilters = (filtersRoot) => {
 
       if(currentValue) isFilterInUse = true;
       
-      // console.log("currentValue >>>", currentValue);
       el.value = currentValue ?? ""
     })
 

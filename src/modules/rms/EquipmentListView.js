@@ -106,9 +106,14 @@ export async function mounted() {
         "/api/equipment-history"
       )
       const response = await mockApi(url)
+
+      if (!response.ok) {
+        const errorData = await response.json?.();
+        toastify({ type: "error", message: errorData || "Submission Failed" })
+        return
+      }
       const result = await response.json()
 
-      // console.log("Log left intentionally for the task's criteria - Result >>", result);
       const { data, pagination } = result || {}
       dataTable.innerHTML = DataTable({
         columns,
@@ -182,7 +187,6 @@ export async function mounted() {
         if (currentOrder === "") nextOrder = "asc"
         else if (currentOrder === "asc") nextOrder = "desc"
         else nextOrder = ""
-        // console.log("currentOrder >>>", currentOrder);
         // reset old sorting in the dom
         dataTable.querySelectorAll("th[data-sort-by]").forEach((th) => {
           th.dataset.sort = ""
