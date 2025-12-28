@@ -1,6 +1,9 @@
 import mockApi from "@/utils/mockApi"
-import { DataTable, LoaderSpinner } from "@/components/ui"
-import DataTableFilters, { mountFilters } from "@/components/ReservationFilters"
+import { DataTable, LoaderSpinner, StatusBadge } from "@/components/ui"
+import DataTableFilters, {
+  mountFilters,
+} from "@/components/ReservationFiltersPanel"
+import { router } from "@/router"
 import {
   toastify,
   refreshApp,
@@ -39,53 +42,82 @@ export default function EquipmentList() {
 }
 
 export async function mounted() {
+  // ---- Table Headers ----
+  const columns = Object.freeze([
+    {
+      header: "Date",
+      key: "date",
+      sortable: true,
+    },
+    {
+      header: "Employee",
+      key: "employeeId",
+      headerClass: "fw-semibold",
+      sortable: true,
+    },
+    {
+      header: "Equipment",
+      key: "equipmentName",
+      sortable: true,
+    },
+    {
+      header: "Reservation Date",
+      key: "reservationDate",
+      sortable: true,
+    },
+    {
+      header: "Status",
+      key: "status",
+      sortable: true,
+      render: (value) => StatusBadge(value),
+    },
+    {
+      header: "Action",
+      key: "action",
+      headerClass: "text-end",
+      cellClass: "text-end",
+      sortable: false,
+      render: (_, row) => `
+        <button 
+          class="btn btn-sm btn-dark fw-semibold" 
+          data-action="view" 
+          data-id="${row.id}"
+        >
+          View
+        </button>
+      `,
+    },
+  ])
+
   // ---- constants ----
   const dataTable = document.getElementById("dataTable")
   const filters = document.getElementById("filters")
 
-  // ---- DataTable - on click event listener ----
-  dataTable.addEventListener("click", (e) => {
-    const action = e.target.closest("[data-action]")?.dataset.action
-    if (!action) return
-
-    switch (action) {
-      case "view": {
-        const id = e.target.closest("tr")?.dataset.id
-        console.log("id", id)
-        break
-      }
-      case "pageChange": {
-        const id = e.target.closest("li")?.dataset.id
-        console.log("id", id)
-        break
-      }
-      case "next":
-        console.log("next")
-        break
-      case "prev":
-        console.log("prev")
-        break
-    }
-  })
-
   const reloadBtnEventController = new AbortController()
+  const currentSearchParams = getCurrentSearchParams()
 
-  const fetchEquipmentList = async (page = 1, extraParams = {}) => {
+  // ---- Functions ----
+  const fetchEquipmentList = async () => {
+    const currentQuery = urlToObject(currentSearchParams)
+
     try {
-      const currentParams = urlToObject(getCurrentSearchParams())
-      const mergedParams = {
-        ...currentParams,
-        ...extraParams,
-        page,
-      }
       const url = objectToUrl(
-        new URLSearchParams(mergedParams),
+        new URLSearchParams(currentQuery),
         "/api/equipment-history"
       )
       const response = await mockApi(url)
       const result = await response.json()
 
-      dataTable.innerHTML = DataTable(result.data)
+      // console.log("Log left intentionally for the task's criteria - Result >>", result);
+      const { data, pagination } = result || {}
+      dataTable.innerHTML = DataTable({
+        columns,
+        items: data,
+        emptyMessage: "No records found.",
+        currentPage: pagination.currentPage,
+        rowsPerPage: pagination.pageSize,
+        totalPages: pagination.totalPages,
+      })
       reloadBtnEventController.abort()
     } catch (err) {
       console.error(err)
@@ -110,7 +142,137 @@ export async function mounted() {
     }
   }
 
+  const replaceSearchParams = (updatedParams) => {
+    if (!updatedParams) return
+  
+    if (+updatedParams.get("page") === 1) {
+      updatedParams.delete("page")
+    }
+
+    const url = objectToUrl(new URLSearchParams(updatedParams))
+
+    router.replace(url)
+  }
+
+  // ---- DataTable - event listeners ----
+  dataTable.addEventListener("click", (e) => {
+    const element = e.target.closest("[data-action]")
+    if (!element) return
+    const action = element.dataset.action
+
+    switch (action) {
+      case "view": {
+        const id = element.dataset.id
+        console.log("id", id)
+        break
+      }
+      case "sort": {
+        const sortBy = element.dataset.sortBy
+        const isValidSortKey = columns.find(
+          (column) => column.key === sortBy
+        )?.sortable
+        if (!isValidSortKey) return
+        const urlSortBy = currentSearchParams.get("sortBy")
+        const urlOrder = currentSearchParams.get("order") || ""
+        const isSameColumn = urlSortBy === sortBy
+        const currentOrder = isSameColumn ? urlOrder : ""
+
+        // compute the next sorting order based on the current state
+        let nextOrder
+        if (currentOrder === "") nextOrder = "asc"
+        else if (currentOrder === "asc") nextOrder = "desc"
+        else nextOrder = ""
+        // console.log("currentOrder >>>", currentOrder);
+        // reset old sorting in the dom
+        dataTable.querySelectorAll("th[data-sort-by]").forEach((th) => {
+          th.dataset.sort = ""
+          th.classList.remove("is-sorted", "sort-asc", "sort-desc")
+        })
+
+        // apply new sorting
+        if (nextOrder !== "") {
+          element.dataset.sort = nextOrder
+          element.classList.add("is-sorted")
+          element.classList.add(nextOrder === "asc" ? "sort-asc" : "sort-desc")
+        }
+
+        // update search params
+        if (nextOrder === "") {
+          currentSearchParams.delete("sortBy")
+          currentSearchParams.delete("order")
+        } else {
+          currentSearchParams.set("sortBy", sortBy)
+          currentSearchParams.set("order", nextOrder)
+        }
+
+        replaceSearchParams(currentSearchParams)
+        break
+      }
+
+      case "pageChange": {
+        const { dataset = { page: 1 }, classList = [] } =
+          e.target.closest("button") || {}
+        const page = dataset.page
+        const isDisabled = classList.contains("active")
+        if (isDisabled) {
+          return
+        }
+
+        currentSearchParams.set("page", page)
+        replaceSearchParams(currentSearchParams)
+        break
+      }
+      case "next": {
+        const nextPage = element?.dataset.page
+        const isDisabled = element.classList.contains("disabled")
+        if (isDisabled) {
+          return
+        }
+        currentSearchParams.set("page", nextPage)
+        replaceSearchParams(currentSearchParams)
+        break
+      }
+      case "prev": {
+        const prevPage = element?.dataset.page
+        const isDisabled = element.classList.contains("disabled")
+        if (isDisabled) {
+          return
+        }
+        currentSearchParams.set("page", prevPage)
+        replaceSearchParams(currentSearchParams)
+        break
+      }
+    }
+  })
+
+  dataTable.addEventListener("change", (e) => {
+    const element = e.target.closest("[data-control]")
+    if (!element) return
+    const control = element.dataset.control
+
+    if (control === "rows") {
+      currentSearchParams.set("page", 1)
+      currentSearchParams.set("limit", element.value)
+
+      replaceSearchParams(currentSearchParams)
+    }
+  })
+
+  // sync sorting on mount
+  const setSorting = () => {
+    const currentSort = currentSearchParams.get("sortBy")
+    const currentOrder = currentSearchParams.get("order")
+    if (!currentSort) return
+
+    const el = dataTable.querySelector(`th[data-sort-by="${currentSort}"]`)
+
+    if (!el) return
+
+    el.classList.add("is-sorted")
+    el.classList.add(currentOrder === "asc" ? "sort-asc" : "sort-desc")
+  }
   // ------ Init -------
   mountFilters(filters)
-  fetchEquipmentList()
+  await fetchEquipmentList()
+  setSorting()
 }

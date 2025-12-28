@@ -14,12 +14,13 @@ export default function DataTableFilters() {
           <div class="row flex-wrap g-4 align-items-end">
             <!-- Search -->
             <div class="col-md-6 col-xl-4">
-              <label class="form-label fw-semibold">Search</label>
+              <label class="form-label fw-semibold" for="searchField">Search</label>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="bi bi-search"></i>
                 </span>
                 <input
+                  id="searchField"
                   type="text"
                   class="form-control"
                   data-filter="search"
@@ -29,12 +30,12 @@ export default function DataTableFilters() {
             </div>
             <!-- Equipment -->
             <div class="col-md-6 col-xl-4">
-                <label class="form-label fw-semibold">Equipment</label>
+                <label class="form-label fw-semibold" for="equipmentField">Equipment</label>
                 <div class="input-group">
                   <span class="input-group-text">
                     <i class="bi bi-tags"></i>
                   </span>
-                  <select class="form-select" data-filter="equipment">
+                  <select id="equipmentField" class="form-select" data-filter="equipment">
                     <option value="">All Equipment Categories</option>
                     <option value="EQ-1">Boots</option>
                     <option value="EQ-2">Vest</option>
@@ -44,23 +45,41 @@ export default function DataTableFilters() {
             </div>
             <!-- Date range -->
             <div class="col-md-6 col-xl-4">
-              <label class="form-label fw-semibold">Reservation Date</label>
-              <div class="d-flex gap-2">
-                <div class="input-group">
-                  <span class="input-group-text">
-                     <i class="bi bi-calendar-event"></i>
-                  </span>
-                  <input type="date" class="form-control" data-filter="dateFrom"/>
-                </div>
+              <fieldset class="border-0 p-0 m-0">
+                <legend class="form-label fw-semibold mb-1">
+                  Reservation Date
+                </legend>
 
-                <div class="input-group">
-                  <span class="input-group-text">
-                     <i class="bi bi-arrow-right"></i>
-                  </span>
-                  <input type="date" class="form-control" data-filter="dateTo"/>
+                <div class="d-flex flex-wrap flex-sm-nowrap gap-2">
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="bi bi-calendar-event"></i>
+                    </span>
+                    <input
+                      id="dateFromField"
+                      type="date"
+                      class="form-control"
+                      data-filter="dateFrom"
+                      aria-label="Reservation start date"
+                    />
+                  </div>
+
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="bi bi-arrow-right"></i>
+                    </span>
+                    <input
+                      id="dateToField"
+                      type="date"
+                      class="form-control"
+                      data-filter="dateTo"
+                      aria-label="Reservation end date"
+                    />
+                  </div>
                 </div>
-              </div>
+              </fieldset>
             </div>
+           
             <!-- Status -->
             <div class="col-md-6 col-xl-4">
               <label class="form-label fw-semibold d-block mb-2">Status</label>
@@ -132,34 +151,37 @@ export default function DataTableFilters() {
 export const mountFilters = (filtersRoot) => {
   if (!filtersRoot) return
   // ------- constants -------
+  const resetButtonEl = filtersRoot.querySelector(
+    '[data-action="reset-filters"]'
+  )
   const dateFromEl = filtersRoot.querySelector('[data-filter="dateFrom"]')
   const dateToEl = filtersRoot.querySelector('[data-filter="dateTo"]')
-  const TODAY = todayISO()
+  const today = todayISO()
+  const currentSearchParams = getCurrentSearchParams()
 
   // ------- functions -------
   function syncDateConstraints() {
-    dateToEl.max = TODAY
+    dateToEl.max = today
     dateToEl.min = dateFromEl.value || ""
-    dateFromEl.max = dateToEl.value || TODAY
+    dateFromEl.max = dateToEl.value || today
   }
 
   function normalizeDateValues() {
     dateToEl.value = clampDate(dateToEl.value, {
       min: dateFromEl.value || null,
-      max: TODAY,
+      max: today,
     })
 
     dateFromEl.value = clampDate(dateFromEl.value, {
       min: null,
-      max: dateToEl.value || TODAY,
+      max: dateToEl.value || today,
     })
 
     syncDateConstraints()
   }
 
   function hydrateFiltersFromUrl() {
-    const params = getCurrentSearchParams()
-    const excludedRaw = params.get("excludedStatus") || ""
+    const excludedRaw = currentSearchParams.get("excludedStatus") || ""
     const excludedSet = new Set(
       excludedRaw
         .split(",")
@@ -167,37 +189,52 @@ export const mountFilters = (filtersRoot) => {
         .map((value) => lowerString(value))
     )
 
+    let isFilterInUse = !!excludedSet.size;
+
     filtersRoot.querySelectorAll("[data-filter]").forEach((el) => {
       const key = el.dataset.filter
+      const currentValue = currentSearchParams.get(key);
 
       if (el.type === "checkbox" && key === "status") {
         el.checked = !excludedSet.has(lowerString(el.value))
         return
       }
 
-      el.value = params.get(key) ?? ""
+      if(currentValue) isFilterInUse = true;
+      
+      // console.log("currentValue >>>", currentValue);
+      el.value = currentValue ?? ""
     })
+
+    toggleResetButtonVisibility(isFilterInUse)
   }
 
   function applyFiltersFromDom() {
-    const params = new URLSearchParams()
+    const currentSearchParams = getCurrentSearchParams()
     const excludedStatusList = []
+
+    // clear old params first as a reset
+    deleteFilters()
 
     filtersRoot.querySelectorAll("[data-filter]").forEach((el) => {
       const key = el.dataset.filter
 
       if (el.type === "checkbox" && key === "status") {
-        if (!el.checked) excludedStatusList.push(el.value.toLowerCase())
+        if (!el.checked) excludedStatusList.push(lowerString(el.value))
         return
       }
 
-      if (el.value) params.set(key, el.value)
+      if (el.value) currentSearchParams.set(key, el.value)
     })
 
     if (excludedStatusList.length)
-      params.set("excludedStatus", excludedStatusList.join(","))
+      currentSearchParams.set("excludedStatus", excludedStatusList.join(","))
 
-    const newUrl = objectToUrl(params, location.pathname)
+    currentSearchParams.set("page", 1)
+
+    const newUrl = objectToUrl(currentSearchParams, location.pathname)
+
+    // debugger 
     router.replace(newUrl)
   }
 
@@ -216,8 +253,19 @@ export const mountFilters = (filtersRoot) => {
     if (e.target.dataset.action === "reset-filters") resetFilters()
   })
 
+  function deleteFilters() {
+    currentSearchParams.delete("search")
+    currentSearchParams.delete("equipment")
+    currentSearchParams.delete("dateFrom")
+    currentSearchParams.delete("dateTo")
+    currentSearchParams.delete("excludedStatus")
+  }
+  
   function resetFilters() {
-    router.replace(location.pathname)
+    deleteFilters();
+    const newUrl = objectToUrl(currentSearchParams, location.pathname)
+
+    router.replace(newUrl)
 
     filtersRoot.querySelectorAll("[data-filter]").forEach((el) => {
       if (el.type === "checkbox" && el.dataset.filter === "status")
@@ -225,8 +273,13 @@ export const mountFilters = (filtersRoot) => {
       else el.value = ""
     })
 
-    dateToEl.max = TODAY
-    dateFromEl.max = TODAY
+    dateToEl.max = today
+    dateFromEl.max = today
+  }
+
+  function toggleResetButtonVisibility(showButton) {
+    resetButtonEl.classList.toggle("d-none", !showButton)
+    resetButtonEl.classList.toggle("d-block", showButton)
   }
 
   // ------- init -------

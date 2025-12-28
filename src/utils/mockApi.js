@@ -34,6 +34,9 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     dateFrom = "",
     dateTo = "",
     excludedStatus = "",
+    sortBy = "",
+    page = 1,
+    limit = 10,
   } = params || {}
 
   if (path === "/api/equipment-history" && method === "GET") {
@@ -46,7 +49,10 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
         .map((status) => lowerString(status))
     )
 
-    const filtered = db.reservations?.filter((reservation) => {
+    const allReservations = db.reservations || []
+
+    // 1) FILTERING
+    const filteredItems = allReservations.filter((reservation) => {
       const employeeId = lowerString(reservation.employeeId) ?? ""
       const equipmentId = lowerString(reservation.equipmentId) ?? ""
       const status = lowerString(reservation.status) ?? ""
@@ -78,7 +84,61 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
       return matchesSearch && matchesEquipment && matchesStatus && matchesDate
     })
 
-    return await simulateRequest({ status: 200, data: filtered }, shouldFail)
+    // 2) SORTING
+    const order = params?.order === "desc" ? "desc" : "asc"
+
+    const sortedItems = filteredItems.sort((a, b) => {
+      if (!sortBy) return 0
+
+      let valueA = a[sortBy]
+      let valueB = b[sortBy]
+
+      switch (sortBy) {
+        case "employeeId":
+          valueA = parseInt(valueA.replace(/\D+/g, ""), 10)
+          valueB = parseInt(valueB.replace(/\D+/g, ""), 10)
+          break
+        case "reservationDate":
+          valueA = new Date(valueA)
+          valueB = new Date(valueB)
+          break
+        case "equipmentName":
+        case "status":
+          valueA = lowerString(valueA)
+          valueB = lowerString(valueB)
+          break
+        default:
+          valueA = lowerString(valueA)
+          valueB = lowerString(valueB)
+      }
+
+      if (valueA > valueB) return order === "asc" ? 1 : -1
+      if (valueA < valueB) return order === "asc" ? -1 : 1
+      return 0
+    })
+
+    // 3) PAGINATION
+    const totalItems = sortedItems.length
+    const pageSize = Number(limit)
+    const currentPage = Math.max(Number(page), 1)
+    const totalPages = Math.max(Math.ceil(totalItems / pageSize), 1)
+
+    const startIndex = (currentPage - 1) * pageSize
+    const endIndex = startIndex + pageSize
+
+    const paginatedItems = sortedItems.slice(startIndex, endIndex)
+
+    const pagination = {
+      currentPage,
+      pageSize,
+      totalItems,
+      totalPages,
+    }
+
+    return await simulateRequest(
+      { status: 200, data: paginatedItems, pagination },
+      shouldFail
+    )
   }
 
   if (path === "/api/reservations" && method === "POST") {
@@ -93,7 +153,6 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
       ...body,
       date: todayISO(),
       status: "Pending",
-      returnDate: todayISO(),
     }
 
     db.reservations.unshift(newEntry)

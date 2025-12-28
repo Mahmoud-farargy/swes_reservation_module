@@ -14,40 +14,40 @@ export default function ReservationForm() {
     <form id="reservationForm" novalidate>
         <!-- Employee ID -->
         <div class="mb-3">
-        <label for="employeeId" class="form-label fw-semibold">
-            Employee ID <span class="text-danger">*</span>
-        </label>
-        <input type="text" class="form-control" id="employeeId" pattern="EMP-[0-9]{4}" placeholder="EMP-1001" required />
-        <div class="invalid-feedback">
-            Employee ID must be in the format <strong>EMP-1234</strong>.
-        </div>
+          <label for="employeeId" class="form-label fw-semibold">
+              Employee ID <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control" id="employeeId" pattern="EMP-[0-9]{4}" placeholder="EMP-1001" required />
+          <div class="invalid-feedback">
+              Employee ID must be in the format <strong>EMP-1234</strong>.
+          </div>
         </div>
 
         <!-- Equipment -->
         <div class="mb-3">
-        <label for="equipment" class="form-label fw-semibold">
-            Equipment Category <span class="text-danger">*</span>
-        </label>
-        <select class="form-select" id="equipment" required>
-            <option value="">Select equipment</option>
-            <option value="helmet">Helmet</option>
-            <option value="boots">Boots</option>
-            <option value="gloves">Gloves</option>
-        </select>
-        <div class="invalid-feedback">
-            Please select equipment.
-        </div>
+          <label for="equipment" class="form-label fw-semibold">
+              Equipment Category <span class="text-danger">*</span>
+          </label>
+          <select class="form-select" id="equipment" required>
+              <option value="">Select equipment</option>
+              <option value="EQ-1" data-name="Boots">Boots</option>
+              <option value="EQ-2" data-name="Vest">Vest</option>
+              <option value="EQ-3" data-name="Helmet">Helmet</option>
+          </select>
+          <div class="invalid-feedback">
+              Please select equipment.
+          </div>
         </div>
 
         <!-- Reservation date -->
         <div class="mb-4">
-        <label for="reservationDate" class="form-label fw-semibold">
-            Reservation Date <span class="text-danger">*</span>
-        </label>
-        <input type="date" class="form-control" id="reservationDate" required />
-        <div class="invalid-feedback">
-            Reservation date is required.
-        </div>
+          <label for="reservationDate" class="form-label fw-semibold">
+              Reservation Date <span class="text-danger">*</span>
+          </label>
+          <input type="date" class="form-control" id="reservationDate" required />
+          <div class="invalid-feedback">
+              Reservation date is required.
+          </div>
         </div>
 
         <!-- Actions box -->
@@ -74,7 +74,7 @@ export function mountedReservationForm(root) {
   const submitButton = form.querySelector("button[type='submit']")
 
   // ---- First input focusing for better UX ----
-  form.querySelector("#employeeId")?.focus();
+  form.querySelector("#employeeId")?.focus()
 
   // ---- Pre-fill date from query ----
   const params = new URLSearchParams(window.location.search)
@@ -85,17 +85,17 @@ export function mountedReservationForm(root) {
 
   // ---- Functions ----
   const toggleSpinner = (state) => {
-    loaderElement.classList.toggle("d-none", !state);
-    loaderElement.classList.toggle("d-block", state);
+    loaderElement.classList.toggle("d-none", !state)
+    loaderElement.classList.toggle("d-block", state)
   }
 
   const setSubmitButtonState = (state) => {
-    submitButton.classList.toggle("disabled", state);
+    submitButton.classList.toggle("disabled", state)
   }
 
   const submitReservation = async (formData) => {
     submitButton.classList.add("disabled")
-    setSubmitButtonState(true);
+    setSubmitButtonState(true)
     toggleSpinner(true)
 
     try {
@@ -132,7 +132,7 @@ export function mountedReservationForm(root) {
         message: "Unexpected error occurred",
       })
     } finally {
-      setSubmitButtonState(false);
+      setSubmitButtonState(false)
       toggleSpinner(false)
     }
   }
@@ -148,7 +148,8 @@ export function mountedReservationForm(root) {
     const { employeeId, equipment, reservationDate } = form || {}
     const formData = {
       employeeId: employeeId.value.trim(),
-      equipment: equipment.value,
+      equipmentId: equipment.value,
+      equipmentName: equipment.value,
       reservationDate: reservationDate.value,
     }
     await submitReservation(formData)
