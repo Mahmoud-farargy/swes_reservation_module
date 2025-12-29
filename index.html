@@ -2,42 +2,51 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/swes.svg" />
-    <link rel="canonical" href="https://swes-rms.netlify.app">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>SWES Reservation Module | Efficient Team Scheduling</title>
+    <meta name="title" content="SWES Reservation Module | Efficient Team Scheduling" />
+    <meta name="description" content="SWES Reservation Module: A high-speed, reliable tool for teams to schedule and manage reservations with a focus on clarity and organized interface design." />
+    <meta name="keywords" content="reservation system, booking module, scheduling tool, calendar management, SWES" />
+    <meta name="author" content="SWES Team" />
+    <meta name="theme-color" content="#383838" />
 
-    <meta name="description" content="SWES Reservation Module helps teams easily schedule, manage, and review reservations in a simple, organized interface. Designed for everyday use with a focus on clarity, speed, and reliability.">
-    <meta name="keywords" content="reservation system, booking module, scheduling tool, calendar management, SWES">
-    <meta name="author" content="SWES Team">
-    <meta name="theme-color" content="#383838">
-    <meta name="msapplication-TileColor" content="#383838"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="SWES Reservation Module">
-    <meta property="og:description" content="A straightforward reservation and scheduling module built for practical daily use.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="/cover.png">
-    <meta property="og:url" content="https://swes-rms.netlify.app">
+    <link rel="icon" type="image/svg+xml" href="/swes.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://swes-rms.netlify.app" />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="SWES Reservation Module">
-    <meta name="twitter:description" content="Manage reservations and schedules with a simple, focused interface.">
-    <meta name="twitter:image" content="/cover.png">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://swes-rms.netlify.app/" />
+    <meta property="og:title" content="SWES Reservation Module" />
+    <meta property="og:description" content="Manage reservations and schedules with a simple, focused interface." />
+    <meta property="og:image" content="https://swes-rms.netlify.app/cover.png" />
 
-    <!-- App & theme -->
-    <meta name="theme-color" content="#383838">
-    <meta name="application-name" content="SWES Reservation Module">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://swes-rms.netlify.app/" />
+    <meta property="twitter:title" content="SWES Reservation Module" />
+    <meta property="twitter:description" content="Manage reservations and schedules with a simple, focused interface." />
+    <meta property="twitter:image" content="https://swes-rms.netlify.app/cover.png" />
 
-    <title>SWES Reservation Module</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="SWES RMS" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   </head>
 
   <body>
-    <div id="root"></div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <a href="#root" class="skip-link" style="position: absolute; left: -10000px;">Skip to content</a>
+
+    <div id="root" aria-live="polite"></div>
+
+    <noscript>
+      <div style="text-align: center; padding: 20px; font-family: sans-serif;">
+        <h2>JavaScript Required</h2>
+        <p>We're sorry, but the SWES Reservation Module requires JavaScript to function. Please enable it in your browser settings.</p>
+      </div>
+    </noscript>
+    
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

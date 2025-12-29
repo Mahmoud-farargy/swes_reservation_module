@@ -84,7 +84,7 @@ export async function mounted() {
           data-id="${row.id}"
           aria-label="View reservation ${row.id}"
         >
-          View
+           <i class="bi bi-eye"></i> View
         </button>
       `,
     },
