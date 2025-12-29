@@ -130,7 +130,7 @@ export function mountedReservationForm(root) {
       console.error(err)
       toastify({
         type: "error",
-        message: "Unexpected error occurred",
+        message: "Unexpected error occurred (This error is intentional)",
       })
     } finally {
       setSubmitButtonState(false)

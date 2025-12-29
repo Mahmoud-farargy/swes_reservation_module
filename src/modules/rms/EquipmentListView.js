@@ -145,7 +145,7 @@ export async function mounted() {
 
       toastify({
         type: "error",
-        message: "Failed to fetch Equipment History. Please try again later.",
+        message: "Failed to fetch Equipment History. Please try again later. (This error is intentional)",
       })
     }
   }
