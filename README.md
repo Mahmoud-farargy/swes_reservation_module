@@ -7,13 +7,24 @@ The focus of the project is **clarity, usability, and clean structure** without 
 
 ## Tech Stack
 
-- **Vite** – bundler & dev server
+- **Vite** - bundler & dev server
 - **Vanilla JavaScript (ES6+)**
 - **Bootstrap 5** – UI & layout
 - **FullCalendar** – calendar view
-- **Mocked REST APIs** (no real backend)
+- **Mocked REST APIs** (no backend)
 
 No frameworks were used intentionally to keep the solution lightweight and easy to reason about.
+
+## Screenshots
+
+### Lab Score
+![Lighthouse](./screenshots/screenshot1.png)
+
+### Home Dashboard
+![Dashboard](./screenshots/screenshot2.png)
+
+
+
 
 
 ## Project Scripts
