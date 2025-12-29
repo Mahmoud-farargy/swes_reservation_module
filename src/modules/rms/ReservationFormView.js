@@ -1,6 +1,6 @@
-// export const css = '/src/styles/about.css';
 
 import ReservationForm, { mountedReservationForm } from "@/components/ReservationForm";
+import { router } from "@/router";
 
 export default function ReservationFormView() {
 
@@ -35,5 +35,11 @@ export default function ReservationFormView() {
 export function mounted() {
   const root = document.getElementById("reservationFormRoot");
 
+  // ---- Init ----
   mountedReservationForm(root)
+  
+  router.setPageMeta({
+    title: "Create Reservation",
+    description: "Create a new reservation for employee equipment."
+  })
 }

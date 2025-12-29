@@ -7,7 +7,7 @@ import { router } from "@/router"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
-document.querySelector("#app").innerHTML = `
+document.querySelector("#root").innerHTML = `
   <div>
     ${Header()}
     <div class="container">

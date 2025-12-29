@@ -54,7 +54,7 @@ function navigate(path, condition = "push") {
     return
   }
 
-  history[`${condition}State`]({}, "", path) // example: history.pushState(...), history.replaceState(...)
+  history[`${condition}State`]({}, "", path) // example: history.pushState(...)or history.replaceState(...)
   loadRoute(path)
 }
 
@@ -73,6 +73,25 @@ function disableLinksDefaultBehavior() {
   })
 }
 
+function setPageMeta({ title, description }) {
+  if (title) {
+    document.title = title ? `SWES | ${title}` : "SWES Reservation Module";
+  }
+
+  if (description) {
+    let metaDescription = document.querySelector('meta[name="description"]');
+
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.name = "description";
+      document.head.appendChild(metaDescription);
+    }
+
+    metaDescription.setAttribute("content", description);
+  }
+}
+
+
 function init() {
   loadRoute(location.pathname)
 }
@@ -80,5 +99,6 @@ function init() {
 export const router = {
   push,
   replace,
+  setPageMeta,
   init,
 }

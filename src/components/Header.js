@@ -3,7 +3,7 @@ export default function Header() {
     <header>
       <nav class="navbar navbar-expand-lg bg-white">
         <div class="container">
-          <a class="navbar-brand d-flex align-items-center" data-link href="/">
+          <a class="navbar-brand d-flex align-items-center" data-link href="/" aria-label="Go to homepage">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
               <rect x="0" y="0" width="200" height="60" rx="10" ry="10" fill="none" />
               <defs>
@@ -34,13 +34,34 @@ export default function Header() {
           <div class="collapse navbar-collapse justify-content-end" id="navbarLinks">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="/" data-link>Home</a>
+                <a class="nav-link"
+                    href="/"
+                    data-link
+                    aria-label="Go to homepage"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarLinks">
+                    Home
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/make_reservation" data-link>Reservation</a>
+                <a class="nav-link" 
+                    href="/make_reservation"
+                    data-link 
+                    aria-label="Go to Create Reservation page"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarLinks">
+                    Reservation
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/calendar" data-link>Calendar</a>
+                <a class="nav-link"
+                    href="/calendar"
+                    data-link
+                    aria-label="Go to Calendar page"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarLinks">
+                    Calendar
+                </a>
               </li>
             </ul>
           </div>

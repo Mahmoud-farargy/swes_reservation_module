@@ -83,6 +83,10 @@ export async function mounted() {
       router.push(`/make_reservation?date=${info.dateStr}`)
     },
   })
-
+  // ---- Init ----
   calendar.render()
+  router.setPageMeta({
+    title: "Reservation Calendar",
+    description: "Check availability and select valid dates for reservations."
+  })
 }

@@ -22,7 +22,7 @@ export default function EquipmentList() {
           <p class="text-muted mb-0">Overview of reserved equipment</p>
         </div>
 
-        <a href="/make_reservation" data-link class="btn btn-dark">
+        <a href="/make_reservation" data-link class="btn btn-dark" aria-label="Create Reservation">
           + New Reservation
         </a>
       </div>
@@ -279,6 +279,10 @@ export async function mounted() {
     el.classList.add(currentOrder === "asc" ? "sort-asc" : "sort-desc")
   }
   // ------ Init -------
+  router.setPageMeta({
+    title: "Equipment Reservations",
+    description: "Review and manage past and upcoming equipment reservations."
+  })
   mountFilters(filters)
   await fetchEquipmentList()
   setSorting()

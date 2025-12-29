@@ -78,7 +78,7 @@ export default function DataTable({
 
             <div class="d-flex align-items-center gap-2">
               <span class="text-muted small">Rows per page</span>
-              <select class="form-select form-select-sm w-auto" data-control="rows" id="rowsPerPage">
+              <select class="form-select form-select-sm w-auto" data-control="rows" id="rowsPerPage" aria-label="Select rows per page count">
                 <option value="10" ${
                   rowsPerPage === 10 ? "selected" : ""
                 }>10</option>
