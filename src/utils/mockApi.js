@@ -148,16 +148,21 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
       return simulateRequest({ status: 400, error: "Employee ID required" })
     }
 
-    const newEntry = {
+    const newReservationEntry = {
       id: generateId("reservation"),
       ...body,
       date: todayISO(),
       status: "Pending",
     }
+    const newCalendarEventEntry = {
+      date: body.reservationDate,
+      reason: "Reserved"
+    }
 
-    db.reservations.unshift(newEntry)
+    db.reservations.unshift(newReservationEntry)
+    db.calendarBlockedDates.unshift(newCalendarEventEntry)
 
-    return simulateRequest({ status: 201, data: newEntry })
+    return simulateRequest({ status: 201, data: newReservationEntry })
   }
 
   if (path === "/api/notify" && method === "POST") {

@@ -82,6 +82,7 @@ export async function mounted() {
           class="btn btn-sm btn-dark fw-semibold" 
           data-action="view" 
           data-id="${row.id}"
+          aria-label="View reservation ${row.id}"
         >
           View
         </button>
@@ -114,6 +115,8 @@ export async function mounted() {
       }
       const result = await response.json()
 
+      // console log is left intentionally
+      console.log("Equipment List: ", result);
       const { data, pagination } = result || {}
       dataTable.innerHTML = DataTable({
         columns,

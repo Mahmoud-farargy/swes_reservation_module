@@ -18,10 +18,15 @@
   /* Colors */
   --primary: #383838;
   --accent1: #eaeaea;
-  --bs-primary: #ff6b6b;
   --bs-primary-rgb: 56, 56, 56;
-  --bs-pagination-active-bg: #ff6b6b;
-  --bs-pagination-active-border-color: #ff6b6b;
+}
+.pagination {
+  --bs-primary-rgb: 56, 56, 56;
+  --bs-primary: var(--primary);
+  --bs-pagination-active-bg: var(--primary);
+  --bs-pagination-active-border-color: var(--primary);
+  --bs-pagination-color: var(--primary);
+  --bs-link-color: var(--primary);
 }
 
 a {
@@ -43,26 +48,7 @@ main#view {
   min-height: calc(100dvh - var(--header-height) - var(--footer-height));
 }
 
-/* button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
-
-/* Experiment */
+/* nav */
 .navbar {
   padding: 1rem 2rem;
   border-bottom: 1px solid var(--accent1);
@@ -93,9 +79,7 @@ button:focus-visible {
   }
 }
 
-/* ---- */
-/* forms.css or main.scss */
-
+/* forms */
 .form-control:focus,
 .form-select:focus {
   border-color: var(--primary);
@@ -152,6 +136,7 @@ a.fc-daygrid-day-number {
   word-break: break-word;
 }
 
+/* Calendar */
 @media (min-width: 40rem) {
   .fc-daygrid-day-top a.fc-daygrid-day-number:hover {
     background: rgba(219, 219, 219, 0.2);
@@ -162,16 +147,20 @@ a.fc-daygrid-day-number {
   white-space: wrap;
 }
 
-/* Flattened variables and nested styles */
 .fc {
-  --fc-today-bg-color: #2f498626;
+  --fc-button-bg-color: var(--primary);
+  --fc-today-bg-color: #38383826;
   --fc-border-color: #e0e0e0;
 }
 
-.fc-popover {
-  z-index: 50 !important;
+.fc .fc-header-toolbar {
+  flex-wrap: wrap;
+  gap:0.5rem;
 }
-
+.fc .fc-header-toolbar .fc-button{
+  padding: 0.3em 0.6em;
+  text-transform: capitalize;
+}
 .fc-daygrid-day {
   font-size: 0.88rem;
 }
@@ -187,7 +176,7 @@ a.fc-daygrid-day-number {
 
 .fc-col-header-cell-cushion {
   font-size: 0.8rem;
-  color: #2e4984;
+  color: var(--primary);
 }
 
 .fc-list-sticky .fc-list-day > * {
@@ -206,14 +195,6 @@ a.fc-daygrid-day-number {
   position: static;
 }
 
-.fc-timegrid-now-indicator-container .fc-timegrid-now-indicator-line {
-  left: -100vw;
-  right: 0;
-  width: 200vw;
-  z-index: 9999;
-  border-width: 2px 0 0;
-}
-
 .fc-daygrid-event {
   border-radius: 5px;
 }
@@ -221,70 +202,49 @@ a.fc-daygrid-day-number {
   padding: 0.2rem 0.4rem;
   text-align: center;
 }
-.fc .fc-daygrid-more-link {
-  font-weight: 700;
+.fullcalendar-container {
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .fc .fc-col-header-cell-cushion {
+    font-size: 0.8rem;
+  }
+  .fc .fc-daygrid-day-number {
+    font-size: 0.75rem;
+  }
 }
 /* -------- */
-/* loader */
-.loader {
-  display: inline-block;
-  position: relative;
-  width: 4rem;
-  height: 4rem;
-}
-
-.loader div {
-  box-sizing: border-box;
-  display: block;
+.loader-spinner {
+  min-height: 5rem;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(2.5px) saturate(110%);
+  -webkit-backdrop-filter: blur(2.5px) saturate(140%);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  z-index: 9999;
+} 
+.loader-spinner::before {
+  content: "";
   position: absolute;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: 0.25rem;
-  border: 0.35rem solid #0d6efd; /* Bootstrap primary */
-  border-radius: 50%;
-  animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #0d6efd transparent transparent transparent;
-}
-
-.loader div:nth-child(1) {
-  animation-delay: -0.45s;
-}
-
-.loader div:nth-child(2) {
-  animation-delay: -0.3s;
-}
-
-@keyframes loader-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 0);
+  background-size: 3px 3px;
+  opacity: .2;
 }
 
 /* Available & Blocked days */
 .day-available {
-  background-color: #e6f7ec; /* soft green */
+  background-color: #e6f7ec;
   cursor: pointer;
 }
 .day-blocked {
   background-color: #f8d7da;
   cursor: not-allowed;
 }
-
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
 
 #dataTable .table-responsive {
   height: 72vh;

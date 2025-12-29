@@ -47,5 +47,6 @@ export const toastify = ({ type, message }) => {
   notyf.open({
     type: type || "info",
     message: message,
+    duration: 6000,
   })
 }

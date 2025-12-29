@@ -9,7 +9,7 @@ import { router } from "@/router"
 
 export default function DataTableFilters() {
   return `
-      <div class="card border-0 shadow-sm mb-4">
+      <section class="card border-0 shadow-sm mb-4">
         <div class="card-body">
           <div class="row flex-wrap g-4 align-items-end">
             <!-- Search -->
@@ -144,7 +144,7 @@ export default function DataTableFilters() {
           </div>
 
         </div>
-      </div>
+      </section>
     `
 }
 
@@ -213,7 +213,11 @@ export const mountFilters = (filtersRoot) => {
     const excludedStatusList = []
 
     // clear old params first as a reset
-    deleteFilters()
+    currentSearchParams.delete("search")
+    currentSearchParams.delete("equipment")
+    currentSearchParams.delete("dateFrom")
+    currentSearchParams.delete("dateTo")
+    currentSearchParams.delete("excludedStatus")
 
     filtersRoot.querySelectorAll("[data-filter]").forEach((el) => {
       const key = el.dataset.filter

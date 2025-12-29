@@ -2,7 +2,9 @@ import { Calendar } from "@fullcalendar/core"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import interactionPlugin from "@fullcalendar/interaction"
 import { router } from "@/router"
-import { db } from "@/data/mockDB" // replace this with an mock api request
+import { toastify } from "@/utils/helpers"
+import mockApi from "@/utils/mockApi"
+import { LoaderSpinner } from "@/components/ui"
 
 export default function CalendarView() {
   return `
@@ -17,8 +19,10 @@ export default function CalendarView() {
 
       <!-- Calendar Card -->
       <div class="card border-0 shadow-sm">
-        <div class="card-body p-3 p-md-4">
-          <div id="calendar"></div>
+        <div class="card-body p-2 p-md-3 p-lg-4" class="position-relative">
+          <div id="calendar">
+            ${LoaderSpinner()}
+          </div>
         </div>
       </div>
 
@@ -28,39 +32,52 @@ export default function CalendarView() {
 
 export async function mounted() {
   const calendarEl = document.getElementById("calendar")
+  let blockedEvents = []
 
-  // { title: 'Available', start: '2025-12-24', color: '#28a745', extendedProps: { type: 'Available' } }
-  // { title: 'Blocked', start: '2025-12-25', color: '#dc3545', extendedProps: { type: 'Blocked' } }
+  try {
+    const response = await mockApi("/api/calendar-blocked-dates")
 
-  const blockedEvents = db.calendarBlockedDates.map((item) => ({
-    start: item.date,
-    end: item.date,
-    // title: item.reason,
-    display: "background",
-    // color: "#dd4857ff",
-    backgroundColor: "#f8d7da",
-    extendedProps: {
-      blocked: true,
-      reason: item.reason,
-    },
-  }))
+    if (!response.ok) {
+      const errorData = await response.json?.()
+      toastify({ type: "error", message: errorData || "Submission Failed" })
+      return
+    }
+    const result = await response.json()
+
+    blockedEvents = result?.data?.map((item) => ({
+      start: item.date,
+      end: item.date,
+      title: item.reason,
+      color: "#dc3545",
+      extendedProps: {
+        blocked: true,
+        reason: item.reason,
+      },
+    }))
+  } catch {
+    toastify({
+      type: "error",
+      message: "Failed to fetch Equipment History. Please try again later.",
+    })
+  }
+
   const calendar = new Calendar(calendarEl, {
     height: "72vh",
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
-    // dayCellClassNames(arg) {
-    //   console.log("arg", arg);
-    //   const isBlocked = db.calendarBlockedDates.some(
-    //     d => d.date === arg.dateStr
-    //   );
+    // dayCellClassNames(info) {
+    //   const isBlocked = blockedEvents.some((item) => {
+    //     const date = info.date.toISOString().slice(0, 10)
+    //     return item.end === date
+    //   })
 
-    //   return isBlocked ? ['day-blocked'] : ['day-available'];
+    //   return isBlocked ? ["day-blocked"] : ["day-available"]
     // },
     events: blockedEvents,
     dateClick: function (info) {
-      const isBlocked =
-        info.dayEl.classList.contains("fc-day-disabled") ||
-        info.event?.extendedProps?.type === "Blocked"
+      const isBlocked = blockedEvents.some(
+        (item) => item.start === info.dateStr
+      )
 
       if (isBlocked) return
       router.push(`/make_reservation?date=${info.dateStr}`)

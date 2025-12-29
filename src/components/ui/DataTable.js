@@ -35,7 +35,7 @@ export default function DataTable({
                         (col) => `<th class="text-capitalize ${
                           col.headerClass ?? ""
                         }" data-sort-by="${col.key}" data-action="sort">
-                        <button class="default-btn">                     
+                        <button class="default-btn" aria-label="Sort by ${col.header}">             
                           ${col.header}
                           <span class="sort-indicator"></span>
                         </button>
@@ -97,7 +97,7 @@ export default function DataTable({
                 <li>
                   <button class="default-btn page-item ${
                     !hasPrevPage ? "disabled" : ""
-                  }" data-action="prev" data-page="${currentPage - 1}">
+                  }" data-action="prev" data-page="${currentPage - 1}" aria-label="Previous page">
                     <a class="page-link">Previous</a>
                   </button>
                 </li>
@@ -110,7 +110,7 @@ export default function DataTable({
                         <button class="default-btn page-item ${
                           isPageActive ? "active" : ""
                         }" data-page="${pageNum}">
-                          <a class="page-link rounded-0" data-action="pageChange">${pageNum}</a>
+                          <a class="page-link rounded-0" data-action="pageChange" aria-label="Go to page ${pageNum}">${pageNum}</a>
                         </button>
                       </li>
                     `
@@ -120,7 +120,7 @@ export default function DataTable({
                 <li>
                   <button class="default-btn page-item ${
                     !hasNextPage ? "disabled" : ""
-                  }" data-action="next" data-page="${currentPage + 1}">
+                  }" data-action="next" data-page="${currentPage + 1}" aria-label="Next page">
                     <a class="page-link">Next</a>
                   </button>
                 </li>
