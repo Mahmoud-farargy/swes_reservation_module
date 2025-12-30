@@ -266,6 +266,10 @@ a.fc-daygrid-day-number {
   margin-left: 6px;
   opacity: 0.6;
 }
+#dataTable .table-responsive thead th[data-action="sort"] button.disabled{
+  cursor:default;
+  pointer-events: none;
+}
 
 #dataTable .table-responsive th.sort-asc .sort-indicator::after {
   content: "▲";

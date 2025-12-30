@@ -11,7 +11,7 @@ document.querySelector("#root").innerHTML = `
   <div>
     ${Header()}
     <div class="container">
-      <main id="view" class="py-3 position-relative"></main>
+      <main id="routerView" class="py-3 position-relative"></main>
     </div>
     ${Footer()}
   </div>

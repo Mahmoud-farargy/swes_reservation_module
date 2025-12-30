@@ -8,7 +8,7 @@ const routes = {
 let currentCSS = null
 
 async function loadRoute(path) {
-  const viewElement = document.getElementById("view")
+  const viewElement = document.getElementById("routerView")
   const routePath = path.split("?")[0]
   const loader = routes[routePath] || routes[404]
 
