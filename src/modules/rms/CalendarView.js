@@ -2,8 +2,10 @@ import { Calendar } from "@fullcalendar/core"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import interactionPlugin from "@fullcalendar/interaction"
 import { router } from "@/router"
-import { toastify } from "@/utils/helpers"
+import { toastify, todayISO } from "@/utils/helpers"
 import mockApi from "@/utils/mockApi"
+import { ROUTES } from "@/constants/routes"
+import { API } from "@/constants/api"
 import { LoaderSpinner } from "@/components/ui"
 
 export default function CalendarView() {
@@ -17,6 +19,26 @@ export default function CalendarView() {
         </p>
       </div>
 
+      <!-- Indicators -->
+      <div class="d-flex flex-wrap gap-3 mb-3">
+        <div class="d-flex align-items-center gap-1">
+          <span class="indicator-box" style="background-color: #6c757dc1;"></span>
+          <small class="text-muted">Past</small>
+        </div>
+        <div class="d-flex align-items-center gap-1">
+          <span class="indicator-box" style="background-color: #198754c2;"></span>
+          <small class="text-success">Available</small>
+        </div>
+        <div class="d-flex align-items-center gap-1">
+          <span class="indicator-box" style="background-color: #dc3546b7;"></span>
+          <small class="text-danger">Reserved</small>
+        </div>
+        <div class="d-flex align-items-center gap-1">
+          <span class="indicator-box" style="background-color: #2f498655;"></span>
+          <small class="text-gray">Today</small>
+        </div>
+      </div>
+
       <!-- Calendar Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-2 p-md-3 p-lg-4" class="position-relative">
@@ -25,7 +47,6 @@ export default function CalendarView() {
           </div>
         </div>
       </div>
-
     </div>
   `
 }
@@ -35,7 +56,7 @@ export async function mounted() {
   let blockedEvents = []
 
   try {
-    const response = await mockApi("/api/calendar-blocked-dates")
+    const response = await mockApi(API.CALENDAR_BLOCKED_DATES)
 
     if (!response.ok) {
       const errorData = await response.json?.()
@@ -47,8 +68,8 @@ export async function mounted() {
     blockedEvents = result?.data?.map((item) => ({
       start: item.date,
       end: item.date,
-      title: item.reason,
-      color: "#dc3545",
+      display: "background",
+      backgroundColor: "#dc3545",
       extendedProps: {
         blocked: true,
         reason: item.reason,
@@ -57,36 +78,71 @@ export async function mounted() {
   } catch {
     toastify({
       type: "error",
-      message: "Failed to fetch Equipment History. Please try again later. (This error is intentional)",
+      message:
+        "Failed to fetch Equipment History. Please try again later. (This error is intentional)",
     })
+  }
+
+  function getAvailableEvents(view, blockedEvents) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const blockedSet = new Set(blockedEvents.map((e) => e.start))
+    const available = []
+
+    for (
+      let day = new Date(view.start);
+      day < view.end;
+      day.setDate(day.getDate() + 1)
+    ) {
+      const dayISO = day.toISOString().slice(0, 10);
+      const dayStart = new Date(day)
+      dayStart.setHours(0, 0, 0, 0)
+
+      if (dayStart < today) continue
+
+      const dateStr = dayISO
+      if (blockedSet.has(dateStr)) continue
+
+      const isToday = dayISO === todayISO()
+      if(isToday) continue
+
+      available.push({
+        start: dateStr,
+        display: "background",
+        backgroundColor: "#198754",
+        extendedProps: { available: true },
+      })
+    }
+
+    return available
   }
 
   const calendar = new Calendar(calendarEl, {
     height: "72vh",
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
-    // dayCellClassNames(info) {
-    //   const isBlocked = blockedEvents.some((item) => {
-    //     const date = info.date.toISOString().slice(0, 10)
-    //     return item.end === date
-    //   })
-
-    //   return isBlocked ? ["day-blocked"] : ["day-available"]
-    // },
-    events: blockedEvents,
+    validRange: {
+      start: todayISO(),
+    },
+    events(info, successCallback) {
+      const available = getAvailableEvents(info, blockedEvents)
+      successCallback([...blockedEvents, ...available])
+    },
     dateClick: function (info) {
       const isBlocked = blockedEvents.some(
         (item) => item.start === info.dateStr
       )
 
       if (isBlocked) return
-      router.push(`/make_reservation?date=${info.dateStr}`)
+      router.push(`${ROUTES.MAKE_RESERVATION}?date=${info.dateStr}`)
     },
   })
+
   // ---- Init ----
   calendar.render()
   router.setPageMeta({
     title: "Reservation Calendar",
-    description: "Check availability and select valid dates for reservations."
+    description: "Check availability and select valid dates for reservations.",
   })
 }

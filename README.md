@@ -24,9 +24,6 @@ No frameworks were used intentionally to keep the solution lightweight and easy 
 ![Dashboard](./screenshots/screenshot2.png)
 
 
-
-
-
 ## Project Scripts
 
 - `npm run dev`  

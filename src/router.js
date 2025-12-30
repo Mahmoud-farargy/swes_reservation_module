@@ -1,8 +1,9 @@
+import { ROUTES } from "@/constants/routes.js"
 const routes = {
-  404: () => import("./modules/common/_404.js"),
-  "/": () => import("./modules/rms/EquipmentListView.js"),
-  "/make_reservation": () => import("./modules/rms/ReservationFormView.js"),
-  "/calendar": () => import("./modules/rms/CalendarView.js"),
+  [ROUTES.HOME]: () => import("./modules/rms/EquipmentListView.js"),
+  [ROUTES.MAKE_RESERVATION]: () => import("./modules/rms/ReservationFormView.js"),
+  [ROUTES.CALENDAR]: () => import("./modules/rms/CalendarView.js"),
+  [ROUTES._404]: () => import("./modules/common/_404.js"),
 }
 
 let currentCSS = null
@@ -10,7 +11,7 @@ let currentCSS = null
 async function loadRoute(path) {
   const viewElement = document.getElementById("routerView")
   const routePath = path.split("?")[0]
-  const loader = routes[routePath] || routes[404]
+  const loader = routes[routePath] || routes[ROUTES._404]
 
   const module = await loader()
 

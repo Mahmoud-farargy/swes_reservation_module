@@ -1,9 +1,11 @@
+import { ROUTES } from "@/constants/routes"
+
 export default function Header() {
   return `
     <header>
       <nav class="navbar navbar-expand-lg bg-white">
         <div class="container">
-          <a class="navbar-brand d-flex align-items-center" data-link href="/" aria-label="Go to homepage">
+          <a class="navbar-brand d-flex align-items-center" data-link href="${ROUTES.HOME}" aria-label="Go to homepage">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
               <rect x="0" y="0" width="200" height="60" rx="10" ry="10" fill="none" />
               <defs>
@@ -35,7 +37,7 @@ export default function Header() {
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link"
-                    href="/"
+                    href="${ROUTES.HOME}"
                     data-link
                     aria-label="Go to homepage"
                     data-bs-toggle="collapse"
@@ -45,7 +47,7 @@ export default function Header() {
               </li>
               <li class="nav-item">
                 <a class="nav-link" 
-                    href="/make_reservation"
+                    href="${ROUTES.MAKE_RESERVATION}"
                     data-link 
                     aria-label="Go to Create Reservation page"
                     data-bs-toggle="collapse"
@@ -55,7 +57,7 @@ export default function Header() {
               </li>
               <li class="nav-item">
                 <a class="nav-link"
-                    href="/calendar"
+                    href="${ROUTES.CALENDAR}"
                     data-link
                     aria-label="Go to Calendar page"
                     data-bs-toggle="collapse"

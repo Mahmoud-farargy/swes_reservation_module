@@ -162,7 +162,7 @@ a.fc-daygrid-day-number {
 
 .fc {
   --fc-button-bg-color: var(--primary);
-  --fc-today-bg-color: #38383826;
+  --fc-today-bg-color: #2f498626;
   --fc-border-color: #e0e0e0;
 }
 
@@ -217,6 +217,13 @@ a.fc-daygrid-day-number {
 }
 .fullcalendar-container {
   width: 100%;
+}
+
+.indicator-box {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 @media (max-width: 576px) {

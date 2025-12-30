@@ -1,5 +1,7 @@
 import mockApi from "@/utils/mockAPI"
 import { toastify } from "@/utils/helpers.js"
+import { ROUTES } from "@/constants/routes";
+import { API } from "@/constants/api";
 import { router } from "@/router"
 import { LoaderSpinner } from "./ui"
 
@@ -52,7 +54,7 @@ export default function ReservationForm() {
 
         <!-- Actions box -->
         <div class="d-flex align-items-center justify-content-between">
-        <a href="/" data-link class="text-decoration-none text-muted d-none d-md-block">
+        <a href="${ROUTES.HOME}" data-link class="text-decoration-none text-muted d-none d-md-block">
             ← Back to list
         </a>
 
@@ -99,7 +101,7 @@ export function mountedReservationForm(root) {
     toggleSpinner(true)
 
     try {
-      const response = await mockApi("/api/reservations", {
+      const response = await mockApi(API.RESERVATIONS, {
         method: "POST",
         body: JSON.stringify(formData),
       })
@@ -112,7 +114,7 @@ export function mountedReservationForm(root) {
 
       const data = await response.json()
 
-      await mockApi("/api/notify", {
+      await mockApi(API.NOTIFY, {
         method: "POST",
         body: JSON.stringify({ resId: data.id }),
       })
@@ -125,7 +127,7 @@ export function mountedReservationForm(root) {
       form.reset()
       form.classList.remove("was-validated")
 
-      router.push("/")
+      router.push(ROUTES.HOME)
     } catch (err) {
       console.error(err)
       toastify({

@@ -5,6 +5,8 @@ import DataTableFilters, {
 } from "@/components/ReservationFiltersPanel"
 import Modal from "@/components/ui/Modal"
 import { router } from "@/router"
+import { API } from "@/constants/api";
+import { ROUTES } from "@/constants/routes"
 import {
   toastify,
   refreshApp,
@@ -23,7 +25,7 @@ export default function EquipmentList() {
           <p class="text-muted mb-0">Overview of reserved equipment</p>
         </div>
 
-        <a href="/make_reservation" data-link class="btn btn-dark" aria-label="Create Reservation">
+        <a href="${ROUTES.MAKE_RESERVATION}" data-link class="btn btn-dark" aria-label="Create Reservation">
           + New Reservation
         </a>
       </div>
@@ -111,7 +113,7 @@ export async function mounted() {
     try {
       const url = objectToUrl(
         new URLSearchParams(currentQuery),
-        "/api/equipment-history"
+        API.EQUIPMENT_HISTORY
       )
       const response = await mockApi(url)
 
@@ -205,6 +207,7 @@ export async function mounted() {
       currentSearchParams.set("order", nextOrder)
     }
 
+    currentSearchParams.set("page", 1)
     replaceSearchParams(currentSearchParams)
   }
 
@@ -229,7 +232,7 @@ export async function mounted() {
               <dt class="col-5">Employee Id</dt><dd class="col-7">${itemData.employeeId}</dd>
               <dt class="col-5">Equipment</dt><dd class="col-7">${itemData.equipmentName}</dd>
               <dt class="col-5">Reservation Date</dt><dd class="col-7">${itemData.reservationDate}</dd>
-              <dt class="col-5">Status</dt><dd class="col-7">${itemData.status}</dd>
+              <dt class="col-5">Status</dt><dd class="col-7">${StatusBadge(itemData.status)}</dd>
               <dt class="col-5">Return Date</dt><dd class="col-7">${itemData.returnDate || "-"}</dd>
             </dl>`
         }

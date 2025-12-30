@@ -1,4 +1,5 @@
 import { db } from "@/data/mockDb"
+import { API } from "@/constants/api"
 import {
   generateId,
   urlToObject,
@@ -38,7 +39,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     limit = 10,
   } = params || {}
 
-  if (path === "/api/equipment-history" && method === "GET") {
+  if (path === API.EQUIPMENT_HISTORY && method === "GET") {
     const searchLc = lowerString(search)
     const equipmentLc = lowerString(equipment)
     const excludedStatusSet = new Set(
@@ -58,7 +59,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
       const resDate = new Date(reservation.reservationDate).getTime()
 
       // --- search ---
-      const matchesSearch = !searchLc || employeeId.includes(searchLc)
+      const matchesSearch = !searchLc || employeeId.includes(searchLc) || reservation.id?.includes(searchLc) 
 
       // --- equipment ---
       const matchesEquipment = !equipmentLc || equipmentId === equipmentLc
@@ -86,7 +87,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     // 2) SORTING
     const order = params?.order === "desc" ? "desc" : "asc"
 
-    const sortedItems = filteredItems.sort((a, b) => {
+    const sortedItems = [...filteredItems].sort((a, b) => {
       if (!sortBy) return 0
 
       let valueA = a[sortBy]
@@ -111,9 +112,12 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
           valueB = lowerString(valueB)
       }
 
-      if (valueA > valueB) return order === "asc" ? 1 : -1
-      if (valueA < valueB) return order === "asc" ? -1 : 1
+      const dir = order === "asc" ? 1 : -1
+
+      if (valueA > valueB) return dir
+      if (valueA < valueB) return -dir
       return 0
+
     })
 
     // 3) PAGINATION
@@ -140,7 +144,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     )
   }
 
-  if (path === "/api/reservations" && method === "POST") {
+  if (path === API.RESERVATIONS && method === "POST") {
     const body = JSON.parse(options.body)
 
     if (!body.employeeId) {
@@ -164,21 +168,21 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     return simulateRequest({ status: 201, data: newReservationEntry })
   }
 
-  if (path === "/api/notify" && method === "POST") {
+  if (path === API.NOTIFY && method === "POST") {
     return await simulateRequest(
       { status: 200, message: "Email Sent Successfully" },
       shouldFail
     )
   }
 
-  if (path === "/api/equipment-categories" && method === "GET") {
+  if (path === API.EQUIPMENT_CATEGORIES && method === "GET") {
     return await simulateRequest(
       { status: 200, data: db.equipment },
       shouldFail
     )
   }
 
-  if (path === "/api/calendar-blocked-dates" && method === "GET") {
+  if (path === API.CALENDAR_BLOCKED_DATES && method === "GET") {
     return await simulateRequest(
       { status: 200, data: db.calendarBlockedDates },
       shouldFail
