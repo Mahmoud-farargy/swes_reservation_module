@@ -56,7 +56,7 @@ body {
   outline-offset: 2px;
 }
 
-main#view {
+main#routerView {
   min-height: calc(100vh - var(--header-height) - var(--footer-height));
   min-height: calc(100dvh - var(--header-height) - var(--footer-height));
 }
