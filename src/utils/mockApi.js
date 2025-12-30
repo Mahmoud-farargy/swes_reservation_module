@@ -1,7 +1,6 @@
 import { db } from "@/data/mockDb"
 import {
   generateId,
-  todayISO,
   urlToObject,
   lowerString,
   upperString,
@@ -151,7 +150,7 @@ export default async function mockApi(endpoint, options = { method: "GET" }) {
     const newReservationEntry = {
       id: generateId("reservation"),
       ...body,
-      date: todayISO(),
+      returnDate: null,
       status: "Pending",
     }
     const newCalendarEventEntry = {

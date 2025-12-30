@@ -48,11 +48,6 @@ export async function mounted() {
   // ---- Table Headers ----
   const columns = Object.freeze([
     {
-      header: "Date",
-      key: "date",
-      sortable: true,
-    },
-    {
       header: "Employee",
       key: "employeeId",
       headerClass: "fw-semibold",
@@ -61,6 +56,11 @@ export async function mounted() {
     {
       header: "Equipment",
       key: "equipmentName",
+      sortable: true,
+    },
+    {
+      header: "Return Date",
+      key: "returnDate",
       sortable: true,
     },
     {
@@ -230,7 +230,7 @@ export async function mounted() {
               <dt class="col-5">Equipment</dt><dd class="col-7">${itemData.equipmentName}</dd>
               <dt class="col-5">Reservation Date</dt><dd class="col-7">${itemData.reservationDate}</dd>
               <dt class="col-5">Status</dt><dd class="col-7">${itemData.status}</dd>
-              <dt class="col-5">Date</dt><dd class="col-7">${itemData.date}</dd>
+              <dt class="col-5">Return Date</dt><dd class="col-7">${itemData.returnDate || "-"}</dd>
             </dl>`
         }
 

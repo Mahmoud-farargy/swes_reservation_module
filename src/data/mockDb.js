@@ -12,7 +12,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-09-03",
-      date: "2025-04-02",
+      returnDate: "2025-04-02",
       status: "Returned",
     },
     {
@@ -21,7 +21,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-10-05",
-      date: "2025-04-05",
+      returnDate: null,
       status: "Overdue",
     },
     {
@@ -30,7 +30,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-10-07",
-      date: "2025-04-09",
+      returnDate: null,
       status: "Pending",
     },
     {
@@ -39,7 +39,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-09-01",
-      date: "2025-04-12",
+      returnDate: "2025-04-12",
       status: "Returned",
     },
     {
@@ -48,7 +48,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-11-03",
-      date: "2025-04-14",
+      returnDate: null,
       status: "Pending",
     },
     {
@@ -57,7 +57,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-11-05",
-      date: "2025-04-16",
+      returnDate: null,
       status: "Overdue",
     },
     {
@@ -66,7 +66,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-11-07",
-      date: "2025-04-18",
+      returnDate: "2025-04-18",
       status: "Returned",
     },
     {
@@ -75,7 +75,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-11-08",
-      date: "2025-04-19",
+      returnDate: "2025-04-19",
       status: "Returned",
     },
     {
@@ -84,7 +84,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-11-11",
-      date: "2025-04-20",
+      returnDate: null,
       status: "Pending",
     },
     {
@@ -93,7 +93,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-11-15",
-      date: "2025-04-21",
+      returnDate: null,
       status: "Overdue",
     },
     {
@@ -102,7 +102,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-12-01",
-      date: "2025-04-22",
+      returnDate: null,
       status: "Pending",
     },
     {
@@ -111,7 +111,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-12-03",
-      date: "2025-04-23",
+      returnDate: "2025-04-23",
       status: "Returned",
     },
     {
@@ -120,7 +120,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-12-05",
-      date: "2025-04-24",
+      returnDate:  null,
       status: "Pending",
     },
     {
@@ -129,7 +129,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-12-07",
-      date: "2025-04-25",
+      returnDate:  null,
       status: "Overdue",
     },
     {
@@ -138,7 +138,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-12-09",
-      date: "2025-04-26",
+      returnDate: "2025-04-26",
       status: "Returned",
     },
     {
@@ -147,7 +147,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-12-10",
-      date: "2025-04-27",
+      returnDate: "2025-04-27",
       status: "Returned",
     },
     {
@@ -156,7 +156,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-12-12",
-      date: "2025-04-28",
+      returnDate: null,
       status: "Pending",
     },
     {
@@ -165,7 +165,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-12-13",
-      date: "2025-04-29",
+      returnDate: null,
       status: "Overdue",
     },
     {
@@ -174,7 +174,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-12-14",
-      date: "2025-04-30",
+      returnDate:  null,
       status: "Pending",
     },
     {
@@ -183,7 +183,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-12-20",
-      date: "2025-04-06",
+      returnDate: "2025-04-06",
       status: "Returned",
     },
     {
@@ -192,7 +192,7 @@ export const db = {
       equipmentId: "EQ-2",
       equipmentName: "Vest",
       reservationDate: "2025-12-21",
-      date: "2025-04-08",
+      returnDate:  null,
       status: "Pending",
     },
     {
@@ -201,7 +201,7 @@ export const db = {
       equipmentId: "EQ-3",
       equipmentName: "Helmet",
       reservationDate: "2025-12-22",
-      date: "2025-04-11",
+      returnDate: null,
       status: "Overdue",
     },
     {
@@ -210,7 +210,7 @@ export const db = {
       equipmentId: "EQ-1",
       equipmentName: "Boots",
       reservationDate: "2025-12-23",
-      date: "2025-04-13",
+      returnDate: "2025-04-13",
       status: "Returned",
     },
   ],
