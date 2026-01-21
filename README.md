@@ -1,6 +1,6 @@
 # SWES – Reservation Module
 
-This project is a small **Single Page Application (SPA)** built **without frameworks** as part of a front-end assessment for the SWES system.  
+This project is a small **Single Page Application (SPA)** built **without frameworks**.  
 It demonstrates how a reservation workflow can be implemented using **vanilla JavaScript**, a simple router, and mocked backend APIs.
 
 The focus of the project is **clarity, usability, and clean structure** without over-engineering.
